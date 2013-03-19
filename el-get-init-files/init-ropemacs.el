@@ -1,0 +1,5 @@
+(require 'pymacs)
+(pymacs-load "ropemacs" "rope-")
+(setq ropemacs-enable-autoimport t)
+(setq rope-generate-autoimport-cache 't)
+(setq ropemacs-autoimport-modules '("~/git/df/befit" "~/git/df/df"))
