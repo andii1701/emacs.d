@@ -53,7 +53,7 @@ Display a list of packages.
 ;;;***
 
 ;;;### (autoloads (feature-mode) "feature-mode/feature-mode" "feature-mode/feature-mode.el"
-;;;;;;  (20929 15237 685979 352000))
+;;;;;;  (21250 54778 921849 32000))
 ;;; Generated autoloads from feature-mode/feature-mode.el
 
 (autoload 'feature-mode "feature-mode/feature-mode" "\
@@ -65,284 +65,105 @@ Major mode for editing plain text stories
 
 ;;;***
 
-;;;### (autoloads (hlt-copy-props hlt-mouse-copy-props hlt-yank-props
-;;;;;;  hlt-toggle-use-overlays-flag hlt-mouse-face-each-line hlt-highlight-single-quotations
-;;;;;;  hlt-replace-highlight-face hlt-unhighlight-region-for-face
-;;;;;;  hlt-unhighlight-region hlt-highlight-regexp-to-end hlt-highlight-regexp-region
-;;;;;;  hlt-highlight-region hlt-highlight hlt-eraser-mouse hlt-highlighter-mouse
-;;;;;;  hlt-eraser hlt-highlighter hlt-choose-default-face hlt-default-copy/yank-props
-;;;;;;  hlt-use-overlays-flag hlt-max-region-no-warning) "highlight/highlight"
-;;;;;;  "highlight/highlight.el" (20919 53007 30484 959000))
-;;; Generated autoloads from highlight/highlight.el
+;;;### (autoloads (jedi:setup anything-jedi-related-names helm-jedi-related-names
+;;;;;;  jedi:ac-setup jedi:complete jedi:start-dedicated-server)
+;;;;;;  "jedi/jedi" "jedi/jedi.el" (21250 55161 737101 528000))
+;;; Generated autoloads from jedi/jedi.el
 
-(defvar hlt-max-region-no-warning 100000 "\
-*Maximum size (chars) of region to highlight without confirmation.
-This is used only for highlighting of a regexp, which can be slow.")
+(autoload 'jedi:start-dedicated-server "jedi/jedi" "\
+Start Jedi server dedicated to this buffer.
+This is useful, for example, when you want to use different
+`sys.path' for some buffer.  When invoked as an interactive
+command, it asks you how to start the Jedi server.  You can edit
+the command in minibuffer to specify the way Jedi server run.
 
-(custom-autoload 'hlt-max-region-no-warning "highlight/highlight" t)
+If you want to setup how Jedi server is started programmatically
+per-buffer/per-project basis, make `jedi:server-command' and
+`jedi:server-args' buffer local and set it in `python-mode-hook'.
+See also: `jedi:server-args'.
 
-(defvar hlt-use-overlays-flag 'only "\
-*Non-nil means use overlays to highlight; nil means use text properties.
-This value also affects some actions, such as unhighlighting, for text
-that is highlighted.  If the value is `only' (the default value), then
-those actions only affect overlay highlighting.  Otherwise, they
-affect both kinds of highlighting.")
+\(fn COMMAND)" t nil)
 
-(custom-autoload 'hlt-use-overlays-flag "highlight/highlight" t)
+(autoload 'jedi:complete "jedi/jedi" "\
+Complete code at point.
 
-(defvar hlt-default-copy/yank-props '(face) "\
-*Properties that `hlt-copy-props' and `hlt-yank-props' use by default.
-You can use a prefix argument with those commands to override the
-default behavior.
-Either a list of properties (symbols) or `t', meaning all properties.")
+\(fn &key (expand ac-expand-on-auto-complete))" t nil)
 
-(custom-autoload 'hlt-default-copy/yank-props "highlight/highlight" t)
+(autoload 'jedi:ac-setup "jedi/jedi" "\
+Add Jedi AC sources to `ac-sources'.
 
-(autoload 'hlt-choose-default-face "highlight/highlight" "\
-Choose a face for highlighting.
+If auto-completion is all you need, you can call this function instead
+of `jedi:setup', like this::
 
-\(fn FACE)" t nil)
+   (add-hook 'python-mode-hook 'jedi:ac-setup)
 
-(autoload 'hlt-highlighter "highlight/highlight" "\
-Highlight the text you drag the mouse over.
-The face used is the last face that was used for highlighting.
-You can use command `hlt-choose-default-face' to choose a different face.
-
-\(fn START-EVENT)" t nil)
-
-(autoload 'hlt-eraser "highlight/highlight" "\
-Erase highlights that you click or drag the mouse over.
-If `hlt-use-overlays-flag' is non-nil, then remove overlay
-highlighting for the last face that was used for highlighting.  (You
-can use command `hlt-choose-default-face' first to choose a different
-face.)  If `hlt-use-overlays-flag' is not `only', then remove
-text-property highlighting for *ALL* faces (not just highlighting
-faces).  This means, in particular, that a value of nil erases both
-overlays for the last face and text properties for all faces.
-
-\(fn START-EVENT)" t nil)
-
-(autoload 'hlt-highlighter-mouse "highlight/highlight" "\
-Same as `hlt-highlighter', but for binding to a menu item.
+Note that this function calls `auto-complete-mode' if it is not
+already enabled, for people who don't call `global-auto-complete-mode'
+in their Emacs configuration.
 
 \(fn)" t nil)
 
-(autoload 'hlt-eraser-mouse "highlight/highlight" "\
-Same as `hlt-eraser', but for binding to a menu item.
+(autoload 'helm-jedi-related-names "jedi/jedi" "\
+Find related names of the object at point using `helm' interface.
 
 \(fn)" t nil)
 
-(autoload 'hlt-highlight "highlight/highlight" "\
-Highlight region, regexp (PREFIX +), or unhighlight region (PREFIX -).
-PREFIX arg non-negative means `hlt-highlight-regexp-region'
-PREFIX arg negative means `hlt-unhighlight-region'
-PREFIX arg nil means `hlt-highlight-region'.
-If the region is not active or it is empty, then use the whole buffer.
-The face used is the last face that was used for highlighting.
-You can use command `hlt-choose-default-face' to choose a different face.
-
-\(fn &optional PREFIX)" t nil)
-
-(autoload 'hlt-highlight-region "highlight/highlight" "\
-Highlight either the region/buffer or new input that you type.
-Use the region if active, or the buffer otherwise.
-
-If *all* of the following are true, the apply the last-used face as a
-text property to the next and subsequent chars that you type, and add
-that face to a facemenu menu (`Text Properties' or one of its
-submenus):
- * You call this command interactively.
- * You use no prefix arg.
- * Option `prop-use-overlays-flag' is nil
- * The last property used for highlighting was `face'.
-
-Otherwise, the behavior respects `hlt-use-overlays-flag' and depends
-on the optional arguments, as follows:
-
- Optional args START and END are the limits of the area to act on.
-  They default to the region limits.  If the region is not active or
-  it is empty, then use the whole buffer.
-
- Optional 3rd arg FACE is the face to use.
-  Interactively, this is the last face that was used for highlighting.
-  (You can use command `hlt-choose-default-face' to choose a different face.)
-
- Optional 4th arg MSG-P non-nil means to display a progress message.
-  Interactively, MSG-P is t.
-
-Optional 5th arg MOUSE-P non-nil means use property `mouse-face', not
- `face'.  Interactively, MOUSE-P is provided by the prefix arg.
-
-\(fn &optional START END FACE MSG-P MOUSE-P)" t nil)
-
-(autoload 'hlt-highlight-regexp-region "highlight/highlight" "\
-Highlight regular expression REGEXP in region/buffer.
-Use the region if active, or the buffer otherwise.
-Optional args START and END are the limits of the area to act on.
-  They default to the region limits.
-Optional 4th arg FACE is the face to use.
-  Interactively, this is the last face that was used for highlighting.
-  (You can use command `hlt-choose-default-face' to choose a different face.)
-Optional 5th arg MSG-P:
-  t means to treat this as an interactive call when deciding to
-    display all messages.
-  non-nil & non-t means to display only error and warning messages.
-Optional 6th arg MOUSE-P non-nil means to use `mouse-face' property,
-  not `face'.  Interactively, this is provided by the prefix arg.
-Optional 7th arg NTH determines which regexp subgroup is highlighted.
-  If nil or 0, the entire regexp is highlighted.  Otherwise, the NTH
-  regexp subgroup (\"\\\\(...\\\\)\" expression) is highlighted.
-  (NTH is not available interactively.)
-
-\(fn &optional START END REGEXP FACE MSG-P MOUSE-P NTH)" t nil)
-
-(autoload 'hlt-highlight-regexp-to-end "highlight/highlight" "\
-Highlight text after cursor that matches REGEXP.
-The behavior respects `hlt-use-overlays-flag' and depends on the
-optional arguments, as follows:
-
- Optional 2nd arg FACE is the face to use.
-  Interactively, this is the last face that was used for highlighting.
-  (You can use command `hlt-choose-default-face' to choose a different
-  face.)
-
- Optional 3rd arg MSG-P non-nil means to display a progress message.
-  Interactively, MSG-P is t.
-
- Optional 4th arg MOUSE-P non-nil means use property `mouse-face', not
- `face'.  Interactively, MOUSE-P is provided by the prefix arg.
-
- Optional 5th arg NTH determines which regexp subgroup is highlighted.
-  If nil or 0, the entire regexp is highlighted.  Otherwise, the NTH
-  regexp subgroup (\"\\\\(...\\\\)\" expression) is highlighted.
-  (NTH is not available interactively.)
-
-\(fn REGEXP &optional FACE MSG-P MOUSE-P NTH)" t nil)
-
-(autoload 'hlt-unhighlight-region "highlight/highlight" "\
-Remove all highlighting in region or buffer.
-Use the region if active, or the buffer otherwise.
-The arguments are the same as those for `hlt-highlight-region'.
-
-If `hlt-use-overlays-flag' is non-nil, then remove overlay highlighting.
-If `hlt-use-overlays-flag' is not `only', then remove text-property
-highlighting.  This means, in particular, that a value of nil removes
-both overlays and text properties.
-
-\(fn &optional START END FACE MSG-P MOUSE-P)" t nil)
-
-(autoload 'hlt-unhighlight-region-for-face "highlight/highlight" "\
-Remove any highlighting in the region that uses FACE.
-Same as `hlt-unhighlight-region', but removes only highlighting
-that uses FACE.  Interactively, you are prompted for the face.
-
-This works only for overlay highlighting, not text-property
-highlighting.
-
-Note: When text in the region has been highlighted using more than one
-face, unhighlighting for one of those faces can mean that adjacent
-highlighting outside the region appears to change.  That outside text
-still has the same multiple-overlay face highlighting, but the overlay
-stacking order is not the same as it was.
-
-Optional arg FACE is the face to use.
-  Interactively, this is the last face that was used for highlighting.
-  (You can use command `hlt-choose-default-face' to choose a different face.)
-Optional args START and END are the limits of the area to act on.
-  They default to the region limits.
-Optional arg MOUSE-P non-nil means use `mouse-face' property, not
-  `face'.  Interactively, MOUSE-P is provided by the prefix arg.
-
-\(fn &optional FACE START END MOUSE-P)" t nil)
-
-(autoload 'hlt-replace-highlight-face "highlight/highlight" "\
-Replace OLD-FACE by NEW-FACE in overlay highlighting in the region.
-This command applies only to overlay highlighting created by library
-`highlight.el'.
-
-Update the last-used highlighting face.
-
-With a prefix argument, replace OLD-FACE as the `mouse-face' property,
- not the `face' property.
-
-Other arguments:
- Optional args START and END are the limits of the area to act on.
-  They default to the region limits.  If the region is not active or
-  it is empty, then use the whole buffer.
- Optional arg MSG-P non-nil means display a progress message.
- Optional arg MOUSE-P non-nil means use `mouse-face' property, not
-  `face'.  Interactively, MOUSE-P is provided by the prefix arg.
-
-\(fn OLD-FACE NEW-FACE &optional START END MSG-P MOUSE-P)" t nil)
-
-(autoload 'hlt-highlight-single-quotations "highlight/highlight" "\
-Highlight single-quoted text in the region.
-This means, for example, commands and keys between `'s: `foobar'.
-If the region is not active or it is empty, then use the whole buffer.
-With a prefix argument, prompt for the highlighting face to use.
-Otherwise, use the last face used for highlighting.
- You can also use command `hlt-choose-default-face' to choose a different face.
-
-\(fn &optional FACE)" t nil)
-
-(autoload 'hlt-mouse-face-each-line "highlight/highlight" "\
-Put `mouse-face' on each line of buffer in region.
-If the region is active and not empty, then limit mouse-face
-highlighting to the region.  Otherwise, use the whole buffer.
-With a prefix argument, prompt for the highlighting face to use.
-Otherwise, use the last face used for highlighting.
- You can also use command `hlt-choose-default-face' to choose a different face.
-Optional args START and END are the limits of the area to act on.
-  They default to the region limits.
-Optional arg MSG-P non-nil means display a progress message.
-
-\(fn &optional START END FACE MSG-P)" t nil)
-
-(autoload 'hlt-toggle-use-overlays-flag "highlight/highlight" "\
-Toggle `hlt-use-overlays-flag'.
-If the current value is non-nil, it is set to nil.
-If the current value is nil, it is set to the last non-nil value.
+(autoload 'anything-jedi-related-names "jedi/jedi" "\
+Find related names of the object at point using `anything' interface.
 
 \(fn)" t nil)
 
-(defalias 'hlt-paste-props 'hlt-yank-props)
+(autoload 'jedi:setup "jedi/jedi" "\
+Fully setup jedi.el for current buffer.
+It setups `ac-sources' (calls `jedi:ac-setup') and turns
+`jedi-mode' on.
 
-(autoload 'hlt-yank-props "highlight/highlight" "\
-Yank (paste) copied text properties over the active region.
-Interactively, do nothing if there is no nonempty active region.
-By default, yank only the copied properties defined by
- `hlt-default-copy/yank-props'.
-With a plain or non-negative prefix arg, yank all copied properties.
-With a negative prefix arg, you are prompted for the copied properties
- to yank.  To finish entering properties, hit `RET RET' (i.e., twice).
+This function is intended to be called from `python-mode-hook',
+like this::
 
-NOTE: If the list of copied text properties is empty, then yanking
-      REMOVES ALL PROPERTIES from the text in the region.  This
-      provides an easy way to UNpropertize text.
+       (add-hook 'python-mode-hook 'jedi:setup)
 
-\(fn START END &optional ARG MSGP)" t nil)
+You can also call this function as a command, to quickly test
+what jedi can do.
 
-(autoload 'hlt-mouse-copy-props "highlight/highlight" "\
-Same as `hlt-copy-props', but copy at mouse pointer, not at point.
-
-\(fn &optional EVENT ARG MSGP)" t nil)
-
-(autoload 'hlt-copy-props "highlight/highlight" "\
-Copy text properties at point for use by `hlt-yank-props'.
-Properties are copied to `hlt-copied-props'.
-By default, copy the properties defined by
- `hlt-default-copy/yank-props'.
-With a plain or non-negative prefix arg, copy all properties.
-With a negative prefix arg, you are prompted for the properties to
- copy.  To finish entering properties, hit `RET RET' (i.e., twice).
-
-\(fn &optional POSITION ARG MSGP)" t nil)
+\(fn)" t nil)
 
 ;;;***
 
-;;;### (autoloads (magit-status) "magit/magit" "magit/magit.el" (20955
-;;;;;;  37414 390395 914000))
+;;;### (autoloads (magit-run-gitk magit-run-git-gui-blame magit-run-git-gui
+;;;;;;  magit-add-change-log-entry-other-window magit-add-change-log-entry
+;;;;;;  magit-init magit-branch-manager magit-wazzup magit-diff-stash
+;;;;;;  magit-diff-unstaged magit-diff-staged magit-diff-working-tree
+;;;;;;  magit-diff magit-interactive-resolve magit-save-index magit-cherry
+;;;;;;  magit-reflog-head magit-reflog magit-file-log magit-log-long-ranged
+;;;;;;  magit-log-long magit-log-ranged magit-log magit-bisect-run
+;;;;;;  magit-bisect-skip magit-bisect-bad magit-bisect-good magit-bisect-reset
+;;;;;;  magit-bisect-start magit-submodule-sync magit-submodule-init
+;;;;;;  magit-submodule-update-init magit-submodule-update magit-stash-snapshot
+;;;;;;  magit-stash magit-delete-tag magit-tag magit-commit-squash
+;;;;;;  magit-commit-fixup magit-commit-reword magit-commit-extend
+;;;;;;  magit-commit-amend magit-commit magit-push magit-push-tags
+;;;;;;  magit-pull magit-remote-update magit-fetch-current magit-fetch
+;;;;;;  magit-reset-working-tree magit-reset-head-hard magit-reset-head
+;;;;;;  magit-interactive-rebase magit-rename-remote magit-remove-remote
+;;;;;;  magit-add-remote magit-rename-branch magit-delete-branch
+;;;;;;  magit-create-branch magit-checkout magit-merge-abort magit-merge
+;;;;;;  magit-show magit-dired-jump magit-unstage-all magit-stage-all
+;;;;;;  magit-status magit-show-commit magit-git-command) "magit/magit"
+;;;;;;  "magit/magit.el" (21250 54807 548591 355000))
 ;;; Generated autoloads from magit/magit.el
+
+(autoload 'magit-git-command "magit/magit" "\
+Execute a Git subcommand asynchronously, displaying the output.
+With a prefix argument run Git in the root of the current
+repository.  Non-interactively run Git in DIRECTORY with ARGS.
+
+\(fn ARGS DIRECTORY)" t nil)
+
+(autoload 'magit-show-commit "magit/magit" "\
+Show information about COMMIT.
+
+\(fn COMMIT &optional NOSELECT)" t nil)
 
 (autoload 'magit-status "magit/magit" "\
 Open a Magit status buffer for the Git repository containing DIR.
@@ -354,12 +175,484 @@ repository to use even if `default-directory' is under Git
 control.  Two prefix arguments means to ignore `magit-repo-dirs'
 when asking for user input.
 
-\(fn DIR)" t nil)
+Depending on option `magit-status-buffer-switch-function' the
+status buffer is shown in another window (the default) or the
+current window.  Non-interactively optional SWITCH-FUNCTION
+can be used to override this.
+
+\(fn DIR &optional SWITCH-FUNCTION)" t nil)
+
+(autoload 'magit-stage-all "magit/magit" "\
+Add all remaining changes in tracked files to staging area.
+With a prefix argument, add remaining untracked files as well.
+\('git add [-u] .').
+
+\(fn &optional INCLUDING-UNTRACKED)" t nil)
+
+(autoload 'magit-unstage-all "magit/magit" "\
+Remove all changes from staging area.
+\('git reset --mixed HEAD').
+
+\(fn)" t nil)
+
+(autoload 'magit-dired-jump "magit/magit" "\
+Visit current item in dired.
+With a prefix argument, visit in other window.
+
+\(fn &optional OTHER-WINDOW)" t nil)
+
+(autoload 'magit-show "magit/magit" "\
+Display and select a buffer containing FILE as stored in REV.
+
+Insert the contents of FILE as stored in the revision REV into a
+buffer.  Then select the buffer using `pop-to-buffer' or with a
+prefix argument using `switch-to-buffer'.  Non-interactivity use
+SWITCH-FUNCTION to switch to the buffer, if that is nil simply
+return the buffer, without displaying it.
+
+\(fn REV FILE &optional SWITCH-FUNCTION)" t nil)
+
+(autoload 'magit-merge "magit/magit" "\
+Merge REVISION into the current 'HEAD', leaving changes uncommitted.
+With a prefix argument, skip editing the log message and commit.
+\('git merge [--no-commit] REVISION').
+
+\(fn REVISION &optional DO-COMMIT)" t nil)
+
+(autoload 'magit-merge-abort "magit/magit" "\
+Abort the current merge operation.
+
+\(fn)" t nil)
+
+(autoload 'magit-checkout "magit/magit" "\
+Switch 'HEAD' to REVISION and update working tree.
+Fails if working tree or staging area contain uncommitted changes.
+If REVISION is a remote branch, offer to create a local tracking branch.
+\('git checkout [-b] REVISION').
+
+\(fn REVISION)" t nil)
+
+(autoload 'magit-create-branch "magit/magit" "\
+Switch 'HEAD' to new BRANCH at revision PARENT and update working tree.
+Fails if working tree or staging area contain uncommitted changes.
+\('git checkout -b BRANCH REVISION').
+
+\(fn BRANCH PARENT)" t nil)
+
+(autoload 'magit-delete-branch "magit/magit" "\
+Delete the BRANCH.
+If the branch is the current one, offers to switch to `master' first.
+With prefix, forces the removal even if it hasn't been merged.
+Works with local or remote branches.
+\('git branch [-d|-D] BRANCH' or 'git push <remote-part-of-BRANCH> :refs/heads/BRANCH').
+
+\(fn BRANCH &optional FORCE)" t nil)
+
+(autoload 'magit-rename-branch "magit/magit" "\
+Rename branch OLD to NEW.
+With prefix, forces the rename even if NEW already exists.
+\('git branch [-m|-M] OLD NEW').
+
+\(fn OLD NEW &optional FORCE)" t nil)
+
+(autoload 'magit-add-remote "magit/magit" "\
+Add the REMOTE and fetch it.
+\('git remote add REMOTE URL').
+
+\(fn REMOTE URL)" t nil)
+
+(autoload 'magit-remove-remote "magit/magit" "\
+Delete the REMOTE.
+\('git remote rm REMOTE').
+
+\(fn REMOTE)" t nil)
+
+(autoload 'magit-rename-remote "magit/magit" "\
+Rename remote OLD to NEW.
+\('git remote rename OLD NEW').
+
+\(fn OLD NEW)" t nil)
+
+(autoload 'magit-interactive-rebase "magit/magit" "\
+Start a git rebase -i session, old school-style.
+
+\(fn COMMIT)" t nil)
+
+(autoload 'magit-reset-head "magit/magit" "\
+Switch 'HEAD' to REVISION, keeping prior working tree and staging area.
+Any differences from REVISION become new changes to be committed.
+With prefix argument, all uncommitted changes in working tree
+and staging area are lost.
+\('git reset [--soft|--hard] REVISION').
+
+\(fn REVISION &optional HARD)" t nil)
+
+(autoload 'magit-reset-head-hard "magit/magit" "\
+Switch 'HEAD' to REVISION, losing all changes.
+Uncomitted changes in both working tree and staging area are lost.
+\('git reset --hard REVISION').
+
+\(fn REVISION)" t nil)
+
+(autoload 'magit-reset-working-tree "magit/magit" "\
+Revert working tree and clear changes from staging area.
+\('git reset --hard HEAD').
+
+With a prefix arg, also remove untracked files.
+With two prefix args, remove ignored files as well.
+
+\(fn &optional ARG)" t nil)
+
+(autoload 'magit-fetch "magit/magit" "\
+Fetch from REMOTE.
+
+\(fn REMOTE)" t nil)
+
+(autoload 'magit-fetch-current "magit/magit" "\
+Run fetch for default remote.
+
+If there is no default remote, ask for one.
+
+\(fn)" t nil)
+
+(autoload 'magit-remote-update "magit/magit" "\
+Update all remotes.
+
+\(fn)" t nil)
+
+(autoload 'magit-pull "magit/magit" "\
+Run git pull.
+
+If there is no default remote, the user is prompted for one and
+its values is saved with git config.  If there is no default
+merge branch, the user is prompted for one and its values is
+saved with git config.  With a prefix argument, the default
+remote is not used and the user is prompted for a remote.  With
+two prefix arguments, the default merge branch is not used and
+the user is prompted for a merge branch.  Values entered by the
+user because of prefix arguments are not saved with git config.
+
+\(fn)" t nil)
+
+(autoload 'magit-push-tags "magit/magit" "\
+Push tags to a remote repository.
+
+Push tags to the current branch's remote.  If that isn't set push
+to \"origin\" or if that remote doesn't exit but only a single
+remote is defined use that.  Otherwise or with a prefix argument
+ask the user what remote to use.
+
+\(fn)" t nil)
+
+(autoload 'magit-push "magit/magit" "\
+Push the current branch to a remote repository.
+
+This command runs the `magit-push-remote' hook.  By default that
+means running `magit-push-dwim'.  So unless you have customized
+the hook this command behaves like this:
+
+With a single prefix argument ask the user what branch to push
+to.  With two or more prefix arguments also ask the user what
+remote to push to.  Otherwise use the remote and branch as
+configured using the Git variables `branch.<name>.remote' and
+`branch.<name>.merge'.  If the former is undefined ask the user.
+If the latter is undefined push without specifing the remote
+branch explicitly.
+
+Also see option `magit-set-upstream-on-push'.
+
+\(fn)" t nil)
+
+(autoload 'magit-commit "magit/magit" "\
+Create a new commit on HEAD.
+With a prefix argument amend to the commit at HEAD instead.
+\('git commit [--amend]').
+
+\(fn &optional AMENDP)" t nil)
+
+(autoload 'magit-commit-amend "magit/magit" "\
+Amend the last commit.
+\('git commit --amend').
+
+\(fn)" t nil)
+
+(autoload 'magit-commit-extend "magit/magit" "\
+Amend the last commit, without editing the message.
+With a prefix argument do change the committer date, otherwise
+don't.  The option `magit-commit-extend-override-date' can be
+used to inverse the meaning of the prefix argument.
+\('git commit --no-edit --amend [--keep-date]').
+
+\(fn &optional OVERRIDE-DATE)" t nil)
+
+(autoload 'magit-commit-reword "magit/magit" "\
+Reword the last commit, ignoring staged changes.
+
+With a prefix argument do change the committer date, otherwise
+don't.  The option `magit-commit-rewrite-override-date' can be
+used to inverse the meaning of the prefix argument.
+
+Non-interactively respect the optional OVERRIDE-DATE argument
+and ignore the option.
+
+\('git commit --only --amend').
+
+\(fn &optional OVERRIDE-DATE)" t nil)
+
+(autoload 'magit-commit-fixup "magit/magit" "\
+Create a fixup commit.
+With a prefix argument the user is always queried for the commit
+to be fixed.  Otherwise the current or marked commit may be used
+depending on the value of option `magit-commit-squash-commit'.
+\('git commit [--no-edit] --fixup=COMMIT').
+
+\(fn &optional COMMIT)" t nil)
+
+(autoload 'magit-commit-squash "magit/magit" "\
+Create a squash commit.
+With a prefix argument the user is always queried for the commit
+to be fixed.  Otherwise the current or marked commit may be used
+depending on the value of option `magit-commit-squash-commit'.
+\('git commit [--no-edit] --fixup=COMMIT').
+
+\(fn &optional COMMIT FIXUP)" t nil)
+
+(autoload 'magit-tag "magit/magit" "\
+Create a new tag with the given NAME at REV.
+With a prefix argument annotate the tag.
+\('git tag [--annotate] NAME REV').
+
+\(fn NAME REV &optional ANNOTATE)" t nil)
+
+(autoload 'magit-delete-tag "magit/magit" "\
+Delete the tag with the given NAME.
+\('git tag -d NAME').
+
+\(fn NAME)" t nil)
+
+(autoload 'magit-stash "magit/magit" "\
+Create new stash of working tree and staging area named DESCRIPTION.
+Working tree and staging area revert to the current 'HEAD'.
+With prefix argument, changes in staging area are kept.
+\('git stash save [--keep-index] DESCRIPTION')
+
+\(fn DESCRIPTION)" t nil)
+
+(autoload 'magit-stash-snapshot "magit/magit" "\
+Create new stash of working tree and staging area; keep changes in place.
+\('git stash save \"Snapshot...\"; git stash apply stash@{0}')
+
+\(fn)" t nil)
+
+(autoload 'magit-submodule-update "magit/magit" "\
+Update the submodule of the current git repository.
+With a prefix arg, do a submodule update --init.
+
+\(fn &optional INIT)" t nil)
+
+(autoload 'magit-submodule-update-init "magit/magit" "\
+Update and init the submodule of the current git repository.
+
+\(fn)" t nil)
+
+(autoload 'magit-submodule-init "magit/magit" "\
+Initialize the submodules.
+
+\(fn)" t nil)
+
+(autoload 'magit-submodule-sync "magit/magit" "\
+Synchronizes submodule's remote URL configuration.
+
+\(fn)" t nil)
+
+(autoload 'magit-bisect-start "magit/magit" "\
+Start a bisect session.
+
+Bisecting a bug means to find the commit that introduced it.
+This command starts such a bisect session by asking for a know
+good and a bad commit.  To move the session forward use the
+other actions from the bisect popup (\\<magit-status-mode-map>\\[magit-key-mode-popup-bisecting]).
+
+\(fn BAD GOOD)" t nil)
+
+(autoload 'magit-bisect-reset "magit/magit" "\
+After bisecting cleanup bisection state and return to original HEAD.
+
+\(fn)" t nil)
+
+(autoload 'magit-bisect-good "magit/magit" "\
+While bisecting, mark the current commit as good.
+Use this after you have asserted that the commit does not contain
+the bug in question.
+
+\(fn)" t nil)
+
+(autoload 'magit-bisect-bad "magit/magit" "\
+While bisecting, mark the current commit as bad.
+Use this after you have asserted that the commit does contain the
+bug in question.
+
+\(fn)" t nil)
+
+(autoload 'magit-bisect-skip "magit/magit" "\
+While bisecting, skip the current commit.
+Use this if for some reason the current commit is not a good one
+to test.  This command lets Git choose a different one.
+
+\(fn)" t nil)
+
+(autoload 'magit-bisect-run "magit/magit" "\
+Bisect automatically by running commands after each step.
+
+\(fn CMDLINE)" t nil)
+
+(autoload 'magit-log "magit/magit" "\
+
+
+\(fn &optional RANGE)" t nil)
+
+(autoload 'magit-log-ranged "magit/magit" "\
+
+
+\(fn RANGE)" t nil)
+
+(autoload 'magit-log-long "magit/magit" "\
+
+
+\(fn &optional RANGE)" t nil)
+
+(autoload 'magit-log-long-ranged "magit/magit" "\
+
+
+\(fn RANGE)" t nil)
+
+(autoload 'magit-file-log "magit/magit" "\
+Display the log for the currently visited file or another one.
+With a prefix argument show the log graph.
+
+\(fn FILE &optional USE-GRAPH)" t nil)
+
+(autoload 'magit-reflog "magit/magit" "\
+Display the reflog of the current branch.
+With a prefix argument another branch can be chosen.
+
+\(fn REF)" t nil)
+
+(autoload 'magit-reflog-head "magit/magit" "\
+Display the HEAD reflog.
+
+\(fn)" t nil)
+
+(autoload 'magit-cherry "magit/magit" "\
+Show commits in a branch that are not merged in the upstream branch.
+
+\(fn HEAD UPSTREAM)" t nil)
+
+(autoload 'magit-save-index "magit/magit" "\
+Add the content of current file as if it was the index.
+
+\(fn)" t nil)
+
+(autoload 'magit-interactive-resolve "magit/magit" "\
+Resolve a merge conflict using Ediff.
+
+\(fn FILE)" t nil)
+
+(autoload 'magit-diff "magit/magit" "\
+Show differences between in a range.
+You can also show the changes in a single commit by omitting the
+range end, but for that `magit-show-commit' is a better option.
+
+\(fn RANGE &optional WORKING ARGS)" t nil)
+
+(autoload 'magit-diff-working-tree "magit/magit" "\
+Show differences between a commit and the current working tree.
+
+\(fn REV)" t nil)
+
+(autoload 'magit-diff-staged "magit/magit" "\
+Show differences between the index and the HEAD commit.
+
+\(fn)" t nil)
+
+(autoload 'magit-diff-unstaged "magit/magit" "\
+Show differences between the current working tree and index.
+
+\(fn)" t nil)
+
+(autoload 'magit-diff-stash "magit/magit" "\
+Show changes in a stash.
+A Stash consist of more than just one commit.  This command uses
+a special diff range so that the stashed changes actually were a
+single commit.
+
+\(fn STASH &optional NOSELECT)" t nil)
+
+(autoload 'magit-wazzup "magit/magit" "\
+Show a list of branches in a dedicated buffer.
+Unlike in the buffer created by `magit-branch-manager' each
+branch can be expanded to show a list of commits not merged
+into the selected branch.
+
+\(fn BRANCH)" t nil)
+
+(autoload 'magit-branch-manager "magit/magit" "\
+Show a list of branches in a dedicated buffer.
+
+\(fn)" t nil)
+
+(autoload 'magit-init "magit/magit" "\
+Create or reinitialize a Git repository.
+Read directory name and initialize it as new Git repository.
+
+If the directory is below an existing repository, then the user
+has to confirm that a new one should be created inside; or when
+the directory is the root of the existing repository, whether
+it should be reinitialized.
+
+Non-interactively DIRECTORY is always (re-)initialized.
+
+\(fn DIRECTORY)" t nil)
+
+(autoload 'magit-add-change-log-entry "magit/magit" "\
+Find change log file and add date entry and item for current change.
+This differs from `add-change-log-entry' (which see) in that
+it acts on the current hunk in a Magit buffer instead of on
+a position in a file-visiting buffer.
+
+\(fn &optional WHOAMI FILE-NAME OTHER-WINDOW)" t nil)
+
+(autoload 'magit-add-change-log-entry-other-window "magit/magit" "\
+Find change log file in other window and add entry and item.
+This differs from `add-change-log-entry-other-window' (which see)
+in that it acts on the current hunk in a Magit buffer instead of
+on a position in a file-visiting buffer.
+
+\(fn &optional WHOAMI FILE-NAME)" t nil)
+
+(autoload 'magit-run-git-gui "magit/magit" "\
+Run `git gui' for the current git repository.
+
+\(fn)" t nil)
+
+(autoload 'magit-run-git-gui-blame "magit/magit" "\
+Run `git gui blame' on the given FILENAME and COMMIT.
+Interactively run it for the current file and the HEAD, with a
+prefix or when the current file cannot be determined let the user
+choose.  When the current buffer is visiting FILENAME instruct
+blame to center around the line point is on.
+
+\(fn COMMIT FILENAME &optional LINENUM)" t nil)
+
+(autoload 'magit-run-gitk "magit/magit" "\
+Run `gitk --all' for the current git repository.
+
+\(fn)" t nil)
 
 ;;;***
 
 ;;;### (autoloads (magit-blame-mode) "magit/magit-blame" "magit/magit-blame.el"
-;;;;;;  (20955 37414 386395 914000))
+;;;;;;  (21250 54807 548591 355000))
 ;;; Generated autoloads from magit/magit-blame.el
 
 (autoload 'magit-blame-mode "magit/magit-blame" "\
@@ -369,25 +662,43 @@ Display blame information inline.
 
 ;;;***
 
-;;;### (autoloads (turn-on-magit-flow magit-flow-mode) "magit/magit-flow"
-;;;;;;  "magit/magit-flow.el" (20955 37414 386395 914000))
-;;; Generated autoloads from magit/magit-flow.el
-
-(autoload 'magit-flow-mode "magit/magit-flow" "\
-FLOW support for Magit
-
-\(fn &optional ARG)" t nil)
-
-(autoload 'turn-on-magit-flow "magit/magit-flow" "\
-Unconditionally turn on `magit-flow-mode'.
-
-\(fn)" nil nil)
-
-;;;***
-
-;;;### (autoloads (turn-on-magit-stgit magit-stgit-mode) "magit/magit-stgit"
-;;;;;;  "magit/magit-stgit.el" (20955 37414 386395 914000))
+;;;### (autoloads (turn-on-magit-stgit magit-stgit-mode magit-stgit-show
+;;;;;;  magit-stgit-goto magit-stgit-discard magit-stgit-rebase magit-stgit-repair
+;;;;;;  magit-stgit-refresh) "magit/magit-stgit" "magit/magit-stgit.el"
+;;;;;;  (21250 54807 548591 355000))
 ;;; Generated autoloads from magit/magit-stgit.el
+
+(autoload 'magit-stgit-refresh "magit/magit-stgit" "\
+Refresh a StGit patch.
+
+\(fn &optional PATCH)" t nil)
+
+(autoload 'magit-stgit-repair "magit/magit-stgit" "\
+Repair StGit metadata if branch was modified with git commands.
+In the case of Git commits these will be imported as new patches
+into the series.
+
+\(fn)" t nil)
+
+(autoload 'magit-stgit-rebase "magit/magit-stgit" "\
+Rebase a StGit patch series.
+
+\(fn)" t nil)
+
+(autoload 'magit-stgit-discard "magit/magit-stgit" "\
+Discard a StGit patch.
+
+\(fn PATCH)" t nil)
+
+(autoload 'magit-stgit-goto "magit/magit-stgit" "\
+Set PATCH as target of StGit push and pop operations.
+
+\(fn PATCH)" nil nil)
+
+(autoload 'magit-stgit-show "magit/magit-stgit" "\
+Show diff of a StGit patch.
+
+\(fn PATCH)" t nil)
 
 (autoload 'magit-stgit-mode "magit/magit-stgit" "\
 StGit support for Magit
@@ -401,9 +712,48 @@ Unconditionally turn on `magit-stgit-mode'.
 
 ;;;***
 
-;;;### (autoloads (turn-on-magit-svn magit-svn-mode) "magit/magit-svn"
-;;;;;;  "magit/magit-svn.el" (20955 37414 386395 914000))
+;;;### (autoloads (turn-on-magit-svn magit-svn-mode magit-svn-fetch-externals
+;;;;;;  magit-svn-remote-update magit-svn-dcommit magit-svn-rebase
+;;;;;;  magit-svn-create-tag magit-svn-create-branch magit-svn-find-rev)
+;;;;;;  "magit/magit-svn" "magit/magit-svn.el" (21250 54807 548591
+;;;;;;  355000))
 ;;; Generated autoloads from magit/magit-svn.el
+
+(autoload 'magit-svn-find-rev "magit/magit-svn" "\
+Find commit for svn REVISION in BRANCH.
+
+\(fn REV &optional BRANCH)" t nil)
+
+(autoload 'magit-svn-create-branch "magit/magit-svn" "\
+Create svn branch NAME.
+
+\(fn NAME)" t nil)
+
+(autoload 'magit-svn-create-tag "magit/magit-svn" "\
+Create svn tag NAME.
+
+\(fn NAME)" t nil)
+
+(autoload 'magit-svn-rebase "magit/magit-svn" "\
+Run git-svn rebase.
+
+\(fn)" t nil)
+
+(autoload 'magit-svn-dcommit "magit/magit-svn" "\
+Run git-svn dcommit.
+
+\(fn)" t nil)
+
+(autoload 'magit-svn-remote-update "magit/magit-svn" "\
+Run git-svn fetch.
+
+\(fn)" t nil)
+
+(autoload 'magit-svn-fetch-externals "magit/magit-svn" "\
+Loops through all external repos found by `magit-svn-external-directories'
+   and runs git svn fetch, and git svn rebase on each of them.
+
+\(fn)" t nil)
 
 (autoload 'magit-svn-mode "magit/magit-svn" "\
 SVN support for Magit
@@ -418,7 +768,7 @@ Unconditionally turn on `magit-svn-mode'.
 ;;;***
 
 ;;;### (autoloads (turn-on-magit-topgit magit-topgit-mode) "magit/magit-topgit"
-;;;;;;  "magit/magit-topgit.el" (20955 37414 386395 914000))
+;;;;;;  "magit/magit-topgit.el" (21250 54807 548591 355000))
 ;;; Generated autoloads from magit/magit-topgit.el
 
 (autoload 'magit-topgit-mode "magit/magit-topgit" "\
@@ -433,24 +783,10 @@ Unconditionally turn on `magit-topgit-mode'.
 
 ;;;***
 
-;;;### (autoloads (global-magit-wip-save-mode magit-wip-save-mode
-;;;;;;  magit-wip-mode) "magit/magit-wip" "magit/magit-wip.el" (20955
-;;;;;;  37414 386395 914000))
+;;;### (autoloads (global-magit-wip-save-mode magit-wip-save-mode)
+;;;;;;  "magit/magit-wip" "magit/magit-wip.el" (21250 54807 548591
+;;;;;;  355000))
 ;;; Generated autoloads from magit/magit-wip.el
-
-(defvar magit-wip-mode nil "\
-Non-nil if Magit-Wip mode is enabled.
-See the command `magit-wip-mode' for a description of this minor mode.
-Setting this variable directly does not take effect;
-either customize it (see the info node `Easy Customization')
-or call the function `magit-wip-mode'.")
-
-(custom-autoload 'magit-wip-mode "magit/magit-wip" nil)
-
-(autoload 'magit-wip-mode "magit/magit-wip" "\
-In Magit log buffers; give wip refs a special appearance.
-
-\(fn &optional ARG)" t nil)
 
 (autoload 'magit-wip-save-mode "magit/magit-wip" "\
 Magit support for committing to a work-in-progress ref.
@@ -481,24 +817,6 @@ Magit-Wip-Save mode is enabled in all buffers where
 See `magit-wip-save-mode' for more information on Magit-Wip-Save mode.
 
 \(fn &optional ARG)" t nil)
-
-;;;***
-
-;;;### (autoloads (rebase-mode) "magit/rebase-mode" "magit/rebase-mode.el"
-;;;;;;  (20955 37414 390395 914000))
-;;; Generated autoloads from magit/rebase-mode.el
-
-(autoload 'rebase-mode "magit/rebase-mode" "\
-Major mode for editing of a Git rebase file.
-
-Rebase files are generated when you run 'git rebase -i' or run
-`magit-interactive-rebase'.  They describe how Git should perform
-the rebase.  See the documentation for git-rebase (e.g., by
-running 'man git-rebase' at the command line) for details.
-
-\(fn)" t nil)
-
-(add-to-list 'auto-mode-alist '("git-rebase-todo" . rebase-mode))
 
 ;;;***
 
@@ -748,7 +1066,7 @@ an exceedingly quick way of adding multiple cursors to multiple lines.
 
 ;;;### (autoloads (pymacs-apply pymacs-call pymacs-exec pymacs-eval
 ;;;;;;  pymacs-autoload pymacs-load) "pymacs/pymacs" "pymacs/pymacs.el"
-;;;;;;  (20809 21783 981434 0))
+;;;;;;  (21250 54777 573908 0))
 ;;; Generated autoloads from pymacs/pymacs.el
 
 (autoload 'pymacs-load "pymacs/pymacs" "\
@@ -801,408 +1119,6 @@ equivalents, other structures are converted into Lisp handles.
 
 ;;;***
 
-;;;### (autoloads (whitespace-report-region whitespace-report whitespace-cleanup-region
-;;;;;;  whitespace-cleanup global-whitespace-toggle-options whitespace-toggle-options
-;;;;;;  global-whitespace-newline-mode global-whitespace-mode whitespace-newline-mode
-;;;;;;  whitespace-mode) "whitespace/whitespace" "whitespace/whitespace.el"
-;;;;;;  (20919 53214 718488 775000))
-;;; Generated autoloads from whitespace/whitespace.el
-
-(autoload 'whitespace-mode "whitespace/whitespace" "\
-Toggle whitespace visualization (Whitespace mode).
-With a prefix argument ARG, enable Whitespace mode if ARG is
-positive, and disable it otherwise.  If called from Lisp, enable
-the mode if ARG is omitted or nil.
-
-See also `whitespace-style', `whitespace-newline' and
-`whitespace-display-mappings'.
-
-\(fn &optional ARG)" t nil)
-
-(autoload 'whitespace-newline-mode "whitespace/whitespace" "\
-Toggle newline visualization (Whitespace Newline mode).
-With a prefix argument ARG, enable Whitespace Newline mode if ARG
-is positive, and disable it otherwise.  If called from Lisp,
-enable the mode if ARG is omitted or nil.
-
-Use `whitespace-newline-mode' only for NEWLINE visualization
-exclusively.  For other visualizations, including NEWLINE
-visualization together with (HARD) SPACEs and/or TABs, please,
-use `whitespace-mode'.
-
-See also `whitespace-newline' and `whitespace-display-mappings'.
-
-\(fn &optional ARG)" t nil)
-
-(defvar global-whitespace-mode nil "\
-Non-nil if Global-Whitespace mode is enabled.
-See the command `global-whitespace-mode' for a description of this minor mode.
-Setting this variable directly does not take effect;
-either customize it (see the info node `Easy Customization')
-or call the function `global-whitespace-mode'.")
-
-(custom-autoload 'global-whitespace-mode "whitespace/whitespace" nil)
-
-(autoload 'global-whitespace-mode "whitespace/whitespace" "\
-Toggle whitespace visualization globally (Global Whitespace mode).
-With a prefix argument ARG, enable Global Whitespace mode if ARG
-is positive, and disable it otherwise.  If called from Lisp,
-enable it if ARG is omitted or nil.
-
-See also `whitespace-style', `whitespace-newline' and
-`whitespace-display-mappings'.
-
-\(fn &optional ARG)" t nil)
-
-(defvar global-whitespace-newline-mode nil "\
-Non-nil if Global-Whitespace-Newline mode is enabled.
-See the command `global-whitespace-newline-mode' for a description of this minor mode.
-Setting this variable directly does not take effect;
-either customize it (see the info node `Easy Customization')
-or call the function `global-whitespace-newline-mode'.")
-
-(custom-autoload 'global-whitespace-newline-mode "whitespace/whitespace" nil)
-
-(autoload 'global-whitespace-newline-mode "whitespace/whitespace" "\
-Toggle global newline visualization (Global Whitespace Newline mode).
-With a prefix argument ARG, enable Global Whitespace Newline mode
-if ARG is positive, and disable it otherwise.  If called from
-Lisp, enable it if ARG is omitted or nil.
-
-Use `global-whitespace-newline-mode' only for NEWLINE
-visualization exclusively.  For other visualizations, including
-NEWLINE visualization together with (HARD) SPACEs and/or TABs,
-please use `global-whitespace-mode'.
-
-See also `whitespace-newline' and `whitespace-display-mappings'.
-
-\(fn &optional ARG)" t nil)
-
-(autoload 'whitespace-toggle-options "whitespace/whitespace" "\
-Toggle local `whitespace-mode' options.
-
-If local whitespace-mode is off, toggle the option given by ARG
-and turn on local whitespace-mode.
-
-If local whitespace-mode is on, toggle the option given by ARG
-and restart local whitespace-mode.
-
-Interactively, it reads one of the following chars:
-
-  CHAR	MEANING
-  (VIA FACES)
-   f	toggle face visualization
-   t	toggle TAB visualization
-   s	toggle SPACE and HARD SPACE visualization
-   r	toggle trailing blanks visualization
-   l	toggle \"long lines\" visualization
-   L	toggle \"long lines\" tail visualization
-   n	toggle NEWLINE visualization
-   e	toggle empty line at bob and/or eob visualization
-   C-i	toggle indentation SPACEs visualization (via `indent-tabs-mode')
-   I	toggle indentation SPACEs visualization
-   i	toggle indentation TABs visualization
-   C-a	toggle SPACEs after TAB visualization (via `indent-tabs-mode')
-   A	toggle SPACEs after TAB: SPACEs visualization
-   a	toggle SPACEs after TAB: TABs visualization
-   C-b	toggle SPACEs before TAB visualization (via `indent-tabs-mode')
-   B	toggle SPACEs before TAB: SPACEs visualization
-   b	toggle SPACEs before TAB: TABs visualization
-
-  (VIA DISPLAY TABLE)
-   T	toggle TAB visualization
-   S	toggle SPACEs before TAB visualization
-   N	toggle NEWLINE visualization
-
-   x	restore `whitespace-style' value
-   ?	display brief help
-
-Non-interactively, ARG should be a symbol or a list of symbols.
-The valid symbols are:
-
-   face			toggle face visualization
-   tabs			toggle TAB visualization
-   spaces		toggle SPACE and HARD SPACE visualization
-   trailing		toggle trailing blanks visualization
-   lines		toggle \"long lines\" visualization
-   lines-tail		toggle \"long lines\" tail visualization
-   newline		toggle NEWLINE visualization
-   empty		toggle empty line at bob and/or eob visualization
-   indentation		toggle indentation SPACEs visualization
-   indentation::tab	toggle indentation SPACEs visualization
-   indentation::space	toggle indentation TABs visualization
-   space-after-tab		toggle SPACEs after TAB visualization
-   space-after-tab::tab		toggle SPACEs after TAB: SPACEs visualization
-   space-after-tab::space	toggle SPACEs after TAB: TABs visualization
-   space-before-tab		toggle SPACEs before TAB visualization
-   space-before-tab::tab	toggle SPACEs before TAB: SPACEs visualization
-   space-before-tab::space	toggle SPACEs before TAB: TABs visualization
-
-   tab-mark		toggle TAB visualization
-   space-mark		toggle SPACEs before TAB visualization
-   newline-mark		toggle NEWLINE visualization
-
-   whitespace-style	restore `whitespace-style' value
-
-See `whitespace-style' and `indent-tabs-mode' for documentation.
-
-\(fn ARG)" t nil)
-
-(autoload 'global-whitespace-toggle-options "whitespace/whitespace" "\
-Toggle global `whitespace-mode' options.
-
-If global whitespace-mode is off, toggle the option given by ARG
-and turn on global whitespace-mode.
-
-If global whitespace-mode is on, toggle the option given by ARG
-and restart global whitespace-mode.
-
-Interactively, it accepts one of the following chars:
-
-  CHAR	MEANING
-  (VIA FACES)
-   f	toggle face visualization
-   t	toggle TAB visualization
-   s	toggle SPACE and HARD SPACE visualization
-   r	toggle trailing blanks visualization
-   l	toggle \"long lines\" visualization
-   L	toggle \"long lines\" tail visualization
-   n	toggle NEWLINE visualization
-   e	toggle empty line at bob and/or eob visualization
-   C-i	toggle indentation SPACEs visualization (via `indent-tabs-mode')
-   I	toggle indentation SPACEs visualization
-   i	toggle indentation TABs visualization
-   C-a	toggle SPACEs after TAB visualization (via `indent-tabs-mode')
-   A	toggle SPACEs after TAB: SPACEs visualization
-   a	toggle SPACEs after TAB: TABs visualization
-   C-b	toggle SPACEs before TAB visualization (via `indent-tabs-mode')
-   B	toggle SPACEs before TAB: SPACEs visualization
-   b	toggle SPACEs before TAB: TABs visualization
-
-  (VIA DISPLAY TABLE)
-   T	toggle TAB visualization
-   S	toggle SPACEs before TAB visualization
-   N	toggle NEWLINE visualization
-
-   x	restore `whitespace-style' value
-   ?	display brief help
-
-Non-interactively, ARG should be a symbol or a list of symbols.
-The valid symbols are:
-
-   face			toggle face visualization
-   tabs			toggle TAB visualization
-   spaces		toggle SPACE and HARD SPACE visualization
-   trailing		toggle trailing blanks visualization
-   lines		toggle \"long lines\" visualization
-   lines-tail		toggle \"long lines\" tail visualization
-   newline		toggle NEWLINE visualization
-   empty		toggle empty line at bob and/or eob visualization
-   indentation		toggle indentation SPACEs visualization
-   indentation::tab	toggle indentation SPACEs visualization
-   indentation::space	toggle indentation TABs visualization
-   space-after-tab		toggle SPACEs after TAB visualization
-   space-after-tab::tab		toggle SPACEs after TAB: SPACEs visualization
-   space-after-tab::space	toggle SPACEs after TAB: TABs visualization
-   space-before-tab		toggle SPACEs before TAB visualization
-   space-before-tab::tab	toggle SPACEs before TAB: SPACEs visualization
-   space-before-tab::space	toggle SPACEs before TAB: TABs visualization
-
-   tab-mark		toggle TAB visualization
-   space-mark		toggle SPACEs before TAB visualization
-   newline-mark		toggle NEWLINE visualization
-
-   whitespace-style	restore `whitespace-style' value
-
-See `whitespace-style' and `indent-tabs-mode' for documentation.
-
-\(fn ARG)" t nil)
-
-(autoload 'whitespace-cleanup "whitespace/whitespace" "\
-Cleanup some blank problems in all buffer or at region.
-
-It usually applies to the whole buffer, but in transient mark
-mode when the mark is active, it applies to the region.  It also
-applies to the region when it is not in transient mark mode, the
-mark is active and \\[universal-argument] was pressed just before
-calling `whitespace-cleanup' interactively.
-
-See also `whitespace-cleanup-region'.
-
-The problems cleaned up are:
-
-1. empty lines at beginning of buffer.
-2. empty lines at end of buffer.
-   If `whitespace-style' includes the value `empty', remove all
-   empty lines at beginning and/or end of buffer.
-
-3. 8 or more SPACEs at beginning of line.
-   If `whitespace-style' includes the value `indentation':
-   replace 8 or more SPACEs at beginning of line by TABs, if
-   `indent-tabs-mode' is non-nil; otherwise, replace TABs by
-   SPACEs.
-   If `whitespace-style' includes the value `indentation::tab',
-   replace 8 or more SPACEs at beginning of line by TABs.
-   If `whitespace-style' includes the value `indentation::space',
-   replace TABs by SPACEs.
-
-4. SPACEs before TAB.
-   If `whitespace-style' includes the value `space-before-tab':
-   replace SPACEs by TABs, if `indent-tabs-mode' is non-nil;
-   otherwise, replace TABs by SPACEs.
-   If `whitespace-style' includes the value
-   `space-before-tab::tab', replace SPACEs by TABs.
-   If `whitespace-style' includes the value
-   `space-before-tab::space', replace TABs by SPACEs.
-
-5. SPACEs or TABs at end of line.
-   If `whitespace-style' includes the value `trailing', remove
-   all SPACEs or TABs at end of line.
-
-6. 8 or more SPACEs after TAB.
-   If `whitespace-style' includes the value `space-after-tab':
-   replace SPACEs by TABs, if `indent-tabs-mode' is non-nil;
-   otherwise, replace TABs by SPACEs.
-   If `whitespace-style' includes the value
-   `space-after-tab::tab', replace SPACEs by TABs.
-   If `whitespace-style' includes the value
-   `space-after-tab::space', replace TABs by SPACEs.
-
-See `whitespace-style', `indent-tabs-mode' and `tab-width' for
-documentation.
-
-\(fn)" t nil)
-
-(autoload 'whitespace-cleanup-region "whitespace/whitespace" "\
-Cleanup some blank problems at region.
-
-The problems cleaned up are:
-
-1. 8 or more SPACEs at beginning of line.
-   If `whitespace-style' includes the value `indentation':
-   replace 8 or more SPACEs at beginning of line by TABs, if
-   `indent-tabs-mode' is non-nil; otherwise, replace TABs by
-   SPACEs.
-   If `whitespace-style' includes the value `indentation::tab',
-   replace 8 or more SPACEs at beginning of line by TABs.
-   If `whitespace-style' includes the value `indentation::space',
-   replace TABs by SPACEs.
-
-2. SPACEs before TAB.
-   If `whitespace-style' includes the value `space-before-tab':
-   replace SPACEs by TABs, if `indent-tabs-mode' is non-nil;
-   otherwise, replace TABs by SPACEs.
-   If `whitespace-style' includes the value
-   `space-before-tab::tab', replace SPACEs by TABs.
-   If `whitespace-style' includes the value
-   `space-before-tab::space', replace TABs by SPACEs.
-
-3. SPACEs or TABs at end of line.
-   If `whitespace-style' includes the value `trailing', remove
-   all SPACEs or TABs at end of line.
-
-4. 8 or more SPACEs after TAB.
-   If `whitespace-style' includes the value `space-after-tab':
-   replace SPACEs by TABs, if `indent-tabs-mode' is non-nil;
-   otherwise, replace TABs by SPACEs.
-   If `whitespace-style' includes the value
-   `space-after-tab::tab', replace SPACEs by TABs.
-   If `whitespace-style' includes the value
-   `space-after-tab::space', replace TABs by SPACEs.
-
-See `whitespace-style', `indent-tabs-mode' and `tab-width' for
-documentation.
-
-\(fn START END)" t nil)
-
-(autoload 'whitespace-report "whitespace/whitespace" "\
-Report some whitespace problems in buffer.
-
-Return nil if there is no whitespace problem; otherwise, return
-non-nil.
-
-If FORCE is non-nil or \\[universal-argument] was pressed just
-before calling `whitespace-report' interactively, it forces
-`whitespace-style' to have:
-
-   empty
-   trailing
-   indentation
-   space-before-tab
-   space-after-tab
-
-If REPORT-IF-BOGUS is non-nil, it reports only when there are any
-whitespace problems in buffer.
-
-Report if some of the following whitespace problems exist:
-
-* If `indent-tabs-mode' is non-nil:
-   empty		1. empty lines at beginning of buffer.
-   empty		2. empty lines at end of buffer.
-   trailing		3. SPACEs or TABs at end of line.
-   indentation		4. 8 or more SPACEs at beginning of line.
-   space-before-tab	5. SPACEs before TAB.
-   space-after-tab	6. 8 or more SPACEs after TAB.
-
-* If `indent-tabs-mode' is nil:
-   empty		1. empty lines at beginning of buffer.
-   empty		2. empty lines at end of buffer.
-   trailing		3. SPACEs or TABs at end of line.
-   indentation		4. TABS at beginning of line.
-   space-before-tab	5. SPACEs before TAB.
-   space-after-tab	6. 8 or more SPACEs after TAB.
-
-See `whitespace-style' for documentation.
-See also `whitespace-cleanup' and `whitespace-cleanup-region' for
-cleaning up these problems.
-
-\(fn &optional FORCE REPORT-IF-BOGUS)" t nil)
-
-(autoload 'whitespace-report-region "whitespace/whitespace" "\
-Report some whitespace problems in a region.
-
-Return nil if there is no whitespace problem; otherwise, return
-non-nil.
-
-If FORCE is non-nil or \\[universal-argument] was pressed just
-before calling `whitespace-report-region' interactively, it
-forces `whitespace-style' to have:
-
-   empty
-   indentation
-   space-before-tab
-   trailing
-   space-after-tab
-
-If REPORT-IF-BOGUS is non-nil, it reports only when there are any
-whitespace problems in buffer.
-
-Report if some of the following whitespace problems exist:
-
-* If `indent-tabs-mode' is non-nil:
-   empty		1. empty lines at beginning of buffer.
-   empty		2. empty lines at end of buffer.
-   trailing		3. SPACEs or TABs at end of line.
-   indentation		4. 8 or more SPACEs at beginning of line.
-   space-before-tab	5. SPACEs before TAB.
-   space-after-tab	6. 8 or more SPACEs after TAB.
-
-* If `indent-tabs-mode' is nil:
-   empty		1. empty lines at beginning of buffer.
-   empty		2. empty lines at end of buffer.
-   trailing		3. SPACEs or TABs at end of line.
-   indentation		4. TABS at beginning of line.
-   space-before-tab	5. SPACEs before TAB.
-   space-after-tab	6. 8 or more SPACEs after TAB.
-
-See `whitespace-style' for documentation.
-See also `whitespace-cleanup' and `whitespace-cleanup-region' for
-cleaning up these problems.
-
-\(fn START END &optional FORCE REPORT-IF-BOGUS)" t nil)
-
-;;;***
-
 ;;;### (autoloads (yas-global-mode yas-minor-mode) "yasnippet/yasnippet"
 ;;;;;;  "yasnippet/yasnippet.el" (20809 22527 45422 77000))
 ;;; Generated autoloads from yasnippet/yasnippet.el
@@ -1246,18 +1162,24 @@ See `yas-minor-mode' for more information on Yas minor mode.
 
 ;;;***
 
-;;;### (autoloads nil nil ("ac-python/ac-python.el" "el-get/el-get-autoloads.el"
+;;;### (autoloads nil nil ("ctable/ctable.el" "ctable/test-ctable.el"
+;;;;;;  "deferred/concurrent-sample.el" "deferred/concurrent.el"
+;;;;;;  "deferred/deferred-samples.el" "deferred/deferred.el" "deferred/test-concurrent.el"
+;;;;;;  "deferred/test-deferred.el" "el-get/el-get-autoloads.el"
 ;;;;;;  "el-get/el-get-build.el" "el-get/el-get-byte-compile.el"
 ;;;;;;  "el-get/el-get-core.el" "el-get/el-get-custom.el" "el-get/el-get-dependencies.el"
 ;;;;;;  "el-get/el-get-install.el" "el-get/el-get-methods.el" "el-get/el-get-notify.el"
-;;;;;;  "el-get/el-get-recipes.el" "el-get/el-get-status.el" "feature-mode/feature-mode-pkg.el"
+;;;;;;  "el-get/el-get-recipes.el" "el-get/el-get-status.el" "epc/epc.el"
+;;;;;;  "epc/epcs.el" "epc/test-epc.el" "feature-mode/feature-mode-pkg.el"
 ;;;;;;  "flymake-cursor/flymake-cursor.el" "highlight-chars/highlight-chars.el"
-;;;;;;  "magit/50magit.el" "magit/magit-bisect.el" "magit/magit-cherry.el"
-;;;;;;  "magit/magit-key-mode.el" "magit/magit-pkg.el" "multiple-cursors/mc-cycle-cursors.el"
+;;;;;;  "highlight/highlight.el" "ido-preview/ido-preview.el" "jedi/jedi-pkg.el"
+;;;;;;  "jedi/test-jedi.el" "jedi/tryout-jedi.el" "magit/50magit.el"
+;;;;;;  "magit/magit-pkg.el" "multiple-cursors/mc-cycle-cursors.el"
 ;;;;;;  "multiple-cursors/multiple-cursors-core.el" "multiple-cursors/multiple-cursors-pkg.el"
-;;;;;;  "multiple-cursors/multiple-cursors.el" "visws/visws.el" "yasnippet-config/yasnippet-config.el"
-;;;;;;  "yasnippet/dropdown-list.el" "yasnippet/yasnippet-debug.el"
-;;;;;;  "yasnippet/yasnippet-tests.el") (21245 27498 828558 999000))
+;;;;;;  "multiple-cursors/multiple-cursors.el" "visws/visws.el" "whitespace/whitespace.el"
+;;;;;;  "yasnippet-config/yasnippet-config.el" "yasnippet/dropdown-list.el"
+;;;;;;  "yasnippet/yasnippet-debug.el" "yasnippet/yasnippet-tests.el")
+;;;;;;  (21250 55174 620593 574000))
 
 ;;;***
 
