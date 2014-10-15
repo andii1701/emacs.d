@@ -33,7 +33,7 @@
       go-autocomplete go-mode
       rinari ruby-mode robe enh-ruby-mode flymake-ruby
       markdown-mode
-      color-theme-solarize
+      color-theme-solarized
       ))
 
 ;; whenever an external process changes a file underneath emacs, and there
@@ -122,3 +122,6 @@
 ;; ido
 (require 'ido)
 (ido-mode t)
+
+;; theme
+(load-theme 'solarized-dark t)
