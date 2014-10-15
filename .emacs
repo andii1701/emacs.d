@@ -4,16 +4,37 @@
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 
-;; el-get stuff
-(setq el-get-user-package-directory "~/.emacs.d/el-get-init-files/")
-(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
-(unless (require 'el-get nil 'noerror)
-  (with-current-buffer
-      (url-retrieve-synchronously
-       "https://raw.github.com/dimitri/el-get/master/el-get-install.el")
-    (goto-char (point-max))
-    (eval-print-last-sexp)))
-(el-get 'sync)
+;; package stuff
+(require 'package)
+(add-to-list 'package-archives
+         '("marmalade" . "http://marmalade-repo.org/packages/"))
+(package-initialize)
+(add-to-list 'package-archives
+         '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(package-initialize) 
+;; check if the packages is installed; if not, install it.
+(mapc
+ (lambda (package)
+   (or (package-installed-p package)
+       (package-install package)))
+ '(magit rainbow-mode jedi helm evil puppet-mode
+      flymake
+      puppetfile-mode flymake-puppet
+      flymake-jshint helm-flymake flymake-json
+      flyspell-lazy
+      flatland-theme
+      yaml-mode ace-jump-mode
+      nginx-mode apache-mode
+      twittering-mode multiple-cursors confluence browse-kill-ring
+      python-mode flymake-python-pyflakes
+      ssh-config-mode yasnippet monokai-theme
+      web-mode
+      project-explorer
+      go-autocomplete go-mode
+      rinari ruby-mode robe enh-ruby-mode flymake-ruby
+      markdown-mode
+      color-theme-solarize
+      ))
 
 ;; whenever an external process changes a file underneath emacs, and there
 ;; was no unsaved changes in the corresponding buffer, just revert its
@@ -23,20 +44,20 @@
 ;; remove rst color schema
 ;;(setq 'rst-level-face-base-color "grey25")
 
-(when (load "flymake" t)
-  (defun flymake-pylint-init ()
-    (let* ((temp-file (flymake-init-create-temp-buffer-copy
-                       'flymake-create-temp-inplace))
-           (local-file (file-relative-name
-                        temp-file
-                        (file-name-directory buffer-file-name))))
-      (list "~/.emacs.d/misc/pyflymake.py" (list local-file))))
-      ;;     check path
-
-  (add-to-list 'flymake-allowed-file-name-masks
-               '("\\.py\\'" flymake-pylint-init)))
-
-(add-hook 'find-file-hook 'flymake-find-file-hook)
+;;(when (load "flymake" t)
+;;  (defun flymake-pylint-init ()
+;;    (let* ((temp-file (flymake-init-create-temp-buffer-copy
+;;                       'flymake-create-temp-inplace))
+;;           (local-file (file-relative-name
+;;                        temp-file
+;;                        (file-name-directory buffer-file-name))))
+;;      (list "~/.emacs.d/misc/pyflymake.py" (list local-file))))
+;;      ;;     check path
+;;
+;;  (add-to-list 'flymake-allowed-file-name-masks
+;;               '("\\.py\\'" flymake-pylint-init)))
+;;
+;;(add-hook 'find-file-hook 'flymake-find-file-hook)
 
 
 (custom-set-variables
@@ -44,6 +65,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ido-enable-flex-matching t)
  '(safe-local-variable-values (quote ((encoding . utf-8))))
  '(show-paren-mode t)
  '(show-trailing-whitespace t))
@@ -96,3 +118,7 @@
 (add-hook 'python-mode-hook 'jedi:setup)
 (setq jedi:setup-keys t)                      ; optional
 (setq jedi:complete-on-dot t)                 ; optional
+
+;; ido
+(require 'ido)
+(ido-mode t)
