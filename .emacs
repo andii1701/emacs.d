@@ -26,7 +26,7 @@
       yaml-mode ace-jump-mode
       nginx-mode apache-mode
       twittering-mode multiple-cursors confluence browse-kill-ring
-      python-mode flymake-python-pyflakes
+      flymake-python-pyflakes
       ssh-config-mode yasnippet monokai-theme
       web-mode
       project-explorer
