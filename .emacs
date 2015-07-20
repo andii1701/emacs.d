@@ -4,20 +4,11 @@
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 
+
 ;; package stuff
-(require 'package)
-(add-to-list 'package-archives
-         '("marmalade" . "http://marmalade-repo.org/packages/"))
-(package-initialize)
-(add-to-list 'package-archives
-         '("melpa" . "http://melpa.milkbox.net/packages/") t)
-(package-initialize) 
-;; check if the packages is installed; if not, install it.
-(mapc
- (lambda (package)
-   (or (package-installed-p package)
-       (package-install package)))
- '(magit rainbow-mode jedi helm evil puppet-mode
+(setq jpk-packages
+      '(
+      helm evil puppet-mode
       flymake
       puppetfile-mode flymake-puppet
       flymake-jshint helm-flymake flymake-json
@@ -33,9 +24,36 @@
       go-autocomplete go-mode
       rinari ruby-mode robe enh-ruby-mode flymake-ruby
       markdown-mode
-      color-theme-solarized
-      groovy-mode
-      ))
+      color-theme-sanityinc-solarized
+      groovy-mode magit rainbow-mode jedi))
+
+(package-initialize)
+(add-to-list 'package-archives
+             '("melpa" . "http://melpa.org/packages/"))
+(add-to-list 'package-archives
+             '("org" . "http://orgmode.org/elpa/"))
+(add-to-list 'package-archives
+	     '("marmalade" . "http://marmalade-repo.org/packages/"))
+
+(when (not package-archive-contents)
+  (package-refresh-contents))
+
+(dolist (pkg jpk-packages)
+  (when (and (not (package-installed-p pkg))
+           (assoc pkg package-archive-contents))
+    (package-install pkg)))
+
+(defun package-list-unaccounted-packages ()
+  "Like `package-list-packages', but shows only the packages that
+  are installed and are not in `jpk-packages'.  Useful for
+  cleaning out unwanted packages."
+  (interactive)
+  (package-show-package-list
+   (remove-if-not (lambda (x) (and (not (memq x jpk-packages))
+                            (not (package-built-in-p x))
+                            (package-installed-p x)))
+                  (mapcar 'car package-archive-contents))))
+
 
 ;; whenever an external process changes a file underneath emacs, and there
 ;; was no unsaved changes in the corresponding buffer, just revert its
@@ -124,9 +142,7 @@
 (require 'ido)
 (ido-mode t)
 
-;; theme
-(load-theme 'solarized-dark t)
-
+(load-theme 'sanityinc-solarized-dark t)
 
 ;; groovy
 ;;; use groovy-mode when file ends in .groovy or has #!/bin/groovy at start
