@@ -1,6 +1,6 @@
 (setq inhibit-splash-screen t)
 
-;; stuff off the gui, 
+;; stuff off the gui,
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 
