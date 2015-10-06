@@ -1,5 +1,9 @@
 #!/bin/bash
 
+sudo apt-get install htop
+sudo apt-get install ack-grep
+sudo apt-get install git tig
+
 git clone https://github.com/andii1701/emacs.d-24.git .emacs.d
 echo "#my custom stuff" >> ~/.bashrc
 echo "source ~/.emacs.d/.bashrc" >> ~/.bashrc
@@ -23,3 +27,5 @@ sudo apt-get install oracle-java8-installer
 
 # 32bit libs for android-sdk
 sudo apt-get install lib32z1 lib32ncurses5 lib32stdc++6
+
+
