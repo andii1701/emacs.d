@@ -24,7 +24,7 @@
       go-autocomplete go-mode
       rinari ruby-mode robe enh-ruby-mode flymake-ruby
       markdown-mode
-      color-theme-sanityinc-solarized
+      color-theme-solarized
       groovy-mode magit rainbow-mode jedi))
 
 (package-initialize)
@@ -142,7 +142,16 @@
 (require 'ido)
 (ido-mode t)
 
-(load-theme 'sanityinc-solarized-dark t)
+;;(require 'color-theme-solarized)
+;; Color theme
+(add-to-list 'load-path "~/.emacs.d/themes/solarized/")
+(require 'color-theme)
+(require 'color-theme-solarized)
+(eval-after-load "color-theme"
+  '(progn
+(color-theme-initialize)
+(color-theme-solarized-dark)))
+(setq color-theme-is-global t)
 
 ;; groovy
 ;;; use groovy-mode when file ends in .groovy or has #!/bin/groovy at start
