@@ -24,7 +24,7 @@
       go-autocomplete go-mode
       rinari ruby-mode robe enh-ruby-mode flymake-ruby
       markdown-mode
-      color-theme-solarized
+      color-theme-sanityinc-solarized
       groovy-mode magit rainbow-mode jedi))
 
 (package-initialize)
@@ -84,6 +84,10 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-enabled-themes (quote (sanityinc-solarized-dark)))
+ '(custom-safe-themes
+   (quote
+    ("8db4b03b9ae654d4a57804286eb3e332725c84d7cdab38463cb6b97d5762ad26" "4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" default)))
  '(ido-enable-flex-matching t)
  '(safe-local-variable-values (quote ((encoding . utf-8))))
  '(show-paren-mode t)
@@ -142,16 +146,8 @@
 (require 'ido)
 (ido-mode t)
 
-;;(require 'color-theme-solarized)
-;; Color theme
-(add-to-list 'load-path "~/.emacs.d/themes/solarized/")
-(require 'color-theme)
-(require 'color-theme-solarized)
-(eval-after-load "color-theme"
-  '(progn
-(color-theme-initialize)
-(color-theme-solarized-dark)))
-(setq color-theme-is-global t)
+(require 'color-theme-sanityinc-solarized)
+(color-theme-sanityinc-solarized-dark)
 
 ;; groovy
 ;;; use groovy-mode when file ends in .groovy or has #!/bin/groovy at start
