@@ -6,5 +6,11 @@ ln -s ~/.emacs.d/.bash_profile .bash_profile
 ln -s ~/.emacs.d/.emacs .emacs
 
 sudo xcodebuild -license
+# install brew
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+
+brew install python3
+brew install bash-completion
+
+export EDITOR=emacs
 
