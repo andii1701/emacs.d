@@ -2,7 +2,10 @@
 
 ;; stuff off the gui,
 (menu-bar-mode -1)
-(tool-bar-mode -1)
+;; turn off toolbar
+(if window-system
+    (tool-bar-mode -1))
+
 
 
 ;; package stuff

@@ -11,6 +11,7 @@ sudo xcodebuild -license
 
 brew install python3
 brew install bash-completion
+brew install emacs --with-cocoa
 
 export EDITOR=emacs
 
