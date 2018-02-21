@@ -97,6 +97,9 @@
     ("4cf3221feff536e2b3385209e9b9dc4c2e0818a69a1cdb4b522756bcdf4e00a4" "8db4b03b9ae654d4a57804286eb3e332725c84d7cdab38463cb6b97d5762ad26" "4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" default)))
  '(fci-rule-color "#0a2832")
  '(ido-enable-flex-matching t)
+ '(package-selected-packages
+   (quote
+    (yasnippet solarized-theme rainbow-mode color-theme-solarized)))
  '(safe-local-variable-values (quote ((encoding . utf-8))))
  '(show-paren-mode t)
  '(show-trailing-whitespace t)
