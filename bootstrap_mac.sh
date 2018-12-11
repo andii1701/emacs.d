@@ -15,6 +15,7 @@ brew install emacs --with-cocoa
 brew install ack
 brew install wget
 brew install curl
+brew install meld
 
 export EDITOR=emacs
 

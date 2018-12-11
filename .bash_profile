@@ -17,5 +17,10 @@ parse_git_branch() {
 export PS1='\[\033[01;32m\]\u@\h\[\033[01;34m\] \w\[\033[33m\]$(parse_git_branch) \[\033[01;34m\]\$\[\033[00m\] '
 
 
+export ANDROID_HOME=/Users/$HOME/Library/Android/sdk
+export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
+
+
+
 
 
